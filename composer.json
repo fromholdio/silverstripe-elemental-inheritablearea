@@ -1,0 +1,28 @@
+{
+	"name": "fromholdio/silverstripe-elemental-inheritablearea",
+	"type": "silverstripe-vendormodule",
+	"description": "A SilverStripe module providing an ElementalArea that can be inherited (and the CMS fields to manage this)",
+	"license": "BSD-3-Clause",
+	"keywords": ["silverstripe", "elemental", "elementalarea", "inherit"],
+	"homepage": "https://github.com/fromholdio/silverstripe-elemental-inheritablearea",
+	"support": {
+		"issues": "https://github.com/fromholdio/silverstripe-elemental-inheritablearea/issues"
+	},
+	"authors": [{
+		"name": "Luke Fromhold",
+		"homepage": "https://fromhold.io"
+	}],
+	"require": {
+		"php": ">=5.6",
+		"silverstripe/vendor-plugin": "^1.0",
+		"fromholdio/silverstripe-elemental-multiarea": "^1.0.1",
+		"unclecheese/display-logic": "^2.0.2"
+	},
+	"autoload": {
+		"psr-4": {
+			"Fromholdio\\ElementalInheritableArea\\": "src/"
+		}
+	},
+	"prefer-stable": true,
+	"minimum-stability": "dev"
+}
