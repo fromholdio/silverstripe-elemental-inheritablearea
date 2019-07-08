@@ -8,7 +8,10 @@ use Fromholdio\ElementalMultiArea\Extensions\FieldsElementalAreaExtension;
 use SGN\HasOneEdit\HasOneEdit;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Core\Manifest\ModuleLoader;
+use SilverStripe\Forms\CheckboxField;
+use SilverStripe\Forms\FieldGroup;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\OptionsetField;
 use SilverStripe\SiteConfig\SiteConfig;
 use UncleCheese\DisplayLogic\Forms\Wrapper;
@@ -22,8 +25,12 @@ class InheritableElementalArea extends ElementalArea
 
     private static $table_name = 'InheritableElementalArea';
 
+    private static $allow_include_elements = true;
+
     private static $db = [
-        'InheritMode' => 'Varchar(20)'
+        'InheritMode' => 'Varchar(20)',
+        'DoIncludeSiteElements' => 'Boolean',
+        'DoIncludeParentElements' => 'Boolean'
     ];
 
     private static $extensions = [
@@ -37,9 +44,11 @@ class InheritableElementalArea extends ElementalArea
         self::MODE_NONE => 'None'
     ];
 
-    public function getInheritedElementalArea($relationName = null)
+    public function getInheritedElementalArea($relationName = null, $mode = null)
     {
-        $mode = $this->InheritMode;
+        if (!$mode) {
+            $mode = $this->InheritMode;
+        }
         if (!$mode) {
             $mode = $this->getDefaultInheritMode();
         }
@@ -100,13 +109,47 @@ class InheritableElementalArea extends ElementalArea
             $modeField = OptionsetField::create(
                 'InheritMode',
                 $label,
-                $modeOptions,
-                $defaultMode
+                $modeOptions
             );
             $fields->push($modeField);
         }
 
+        $fields->push(LiteralField::create($relationName . 'ElementalAreaFields', ''));
+
         if (isset($modeOptions[self::MODE_SELF])) {
+
+            if ($this->config()->get('allow_include_elements')) {
+                if (isset($modeOptions[self::MODE_SITE]) || isset($modeOptions[self::MODE_PARENT])) {
+
+                    $elementsIncludeFieldGroup = FieldGroup::create('Blocks');
+
+                    if (isset($modeOptions[self::MODE_SITE])) {
+                        $includeSiteElementsField = CheckboxField::create(
+                            'DoIncludeSiteElements',
+                            'Include site blocks'
+                        );
+                        $elementsIncludeFieldGroup->push($includeSiteElementsField);
+                    }
+
+                    if (isset($modeOptions[self::MODE_PARENT])) {
+                        $includeParentElementsField = CheckboxField::create(
+                            'DoIncludeParentElements',
+                            'Include parent blocks'
+                        );
+                        $elementsIncludeFieldGroup->push($includeParentElementsField);
+                    }
+
+                    $elementsIncludeWrapper = Wrapper::create($elementsIncludeFieldGroup);
+                    $elementsIncludeWrapper->setName($relationName . 'IncludeElementsGroup');
+                    $fields->push($elementsIncludeWrapper);
+
+                    if (count($modeOptions) > 1) {
+                        $elementsIncludeWrapper
+                            ->displayIf($hasOneKey . 'InheritMode')
+                            ->isEqualTo(self::MODE_SELF);
+                    }
+                }
+            }
 
             $editorWrapper = Wrapper::create(
                 ElementalAreaField::create(
@@ -115,6 +158,7 @@ class InheritableElementalArea extends ElementalArea
                     $types
                 )
             );
+            $editorWrapper->setName($relationName . 'Group');
             $fields->push($editorWrapper);
 
             if (count($modeOptions) > 1) {
