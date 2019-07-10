@@ -60,8 +60,8 @@ class InheritableElementalArea extends ElementalArea
         $area = null;
         if ($mode === self::MODE_PARENT) {
             $parent = $this->getInheritParent();
-            if ($parent) {
-                $area = $parent->getInheritedElementalArea($relationName);
+            if ($parent && $parent->$relationName()) {
+                $area = $parent->$relationName()->getInheritedElementalArea($relationName);
             }
         }
         else if ($mode === self::MODE_SITE) {
