@@ -101,17 +101,19 @@ class InheritableElementalArea extends ElementalArea
         if (count($modeOptions) > 1) {
 
             $page = $this->getOwnerPage();
-            $label = $page->fieldLabel($relationName);
-            if (!$label) {
-                $label = $this->fieldLabel('InheritMode');
-            }
+            if ($page && $page->exists()) {
+                $label = $page->fieldLabel($relationName);
+                if (!$label) {
+                    $label = $this->fieldLabel('InheritMode');
+                }
 
-            $modeField = OptionsetField::create(
-                'InheritMode',
-                $label,
-                $modeOptions
-            );
-            $fields->push($modeField);
+                $modeField = OptionsetField::create(
+                    'InheritMode',
+                    $label,
+                    $modeOptions
+                );
+                $fields->push($modeField);
+            }
         }
 
         $fields->push(LiteralField::create($relationName . 'ElementalAreaFields', ''));
