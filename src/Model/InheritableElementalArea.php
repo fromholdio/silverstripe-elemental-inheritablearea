@@ -181,6 +181,9 @@ class InheritableElementalArea extends ElementalArea
         if ($this->InheritMode === $this->getDefaultInheritMode()) {
             $this->InheritMode = null;
         }
+        if ($this->Elements()->count() > 0) {
+            $this->InheritMode = self::MODE_SELF;
+        }
     }
 
     public function getInheritParent()
