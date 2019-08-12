@@ -267,6 +267,18 @@ class InheritableElementalArea extends ElementalArea
                 }
             }
         }
+        else if (is_a($page, SiteConfig::class)) {
+
+            if (isset($options[self::MODE_PARENT])) {
+                unset($options[self::MODE_PARENT]);
+            }
+            if (isset($options[self::MODE_SITE])) {
+                unset($options[self::MODE_SITE]);
+            }
+            if (isset($options[self::MODE_NONE])) {
+                unset($options[self::MODE_NONE]);
+            }
+        }
 
         $this->extend('updateInheritModeOptions', $options);
         return $options;
