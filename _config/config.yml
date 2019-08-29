@@ -1,3 +1,13 @@
 ---
 Name: fromholdio-elemental-inheritablearea
+Except:
+  moduleexists: 'symbiote/silverstripe-multisites'
 ---
+
+DNADesign\Elemental\Models\BaseElement:
+  extensions:
+    - Fromholdio\ElementalInheritableArea\Extensions\BaseElementExtension
+
+SilverStripe\SiteConfig\SiteConfig:
+  extensions:
+    - Fromholdio\ElementalInheritableArea\Extensions\SiteConfigExtension
