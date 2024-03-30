@@ -1,7 +1,9 @@
 ---
 Name: fromholdio-elemental-inheritablearea
 Except:
-  moduleexists: 'symbiote/silverstripe-multisites'
+  moduleexists:
+    - 'symbiote/silverstripe-multisites'
+    - 'fromholdio/silverstripe-configured-multisites'
 ---
 
 DNADesign\Elemental\Models\BaseElement:

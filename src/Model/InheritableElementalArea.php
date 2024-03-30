@@ -328,8 +328,8 @@ class InheritableElementalArea extends ElementalArea
 
     public function getIsMultisitesEnabled()
     {
-        return ModuleLoader::inst()
-            ->getManifest()
-            ->moduleExists('symbiote/silverstripe-multisites');
+        $manifest = ModuleLoader::inst()->getManifest();
+        return ($manifest->moduleExists('symbiote/silverstripe-multisites')
+            || $manifest->moduleExists('fromholdio/silverstripe-configured-multisites'));
     }
 }
