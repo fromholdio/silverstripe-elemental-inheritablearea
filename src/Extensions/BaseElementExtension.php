@@ -8,7 +8,7 @@ use SilverStripe\SiteConfig\SiteConfig;
 
 class BaseElementExtension extends Extension
 {
-    public function updateCMSEditLink(&$link)
+    public function updateCMSEditLink(&$link): void
     {
         $owner = $this->getOwner();
 
