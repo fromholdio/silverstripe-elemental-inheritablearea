@@ -6,12 +6,8 @@ This module supports single site as well as [multisites](https://github.com/symb
 
 ## Requirements
 
-* [silverstripe-framework](https://github.com/silverstripe/silverstripe-framework) ^4 or ^5
+* [silverstripe-framework](https://github.com/silverstripe/silverstripe-framework) ^6
 
 ## Installation
 
 `composer require fromholdio/silverstripe-elemental-inheritablearea`
-
-## Details & Usage
-
-Docs

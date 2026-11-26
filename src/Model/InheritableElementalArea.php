@@ -5,7 +5,7 @@ namespace Fromholdio\ElementalInheritableArea\Model;
 use DNADesign\Elemental\Forms\ElementalAreaField;
 use DNADesign\Elemental\Models\ElementalArea;
 use Fromholdio\ElementalMultiArea\Extensions\FieldsElementalAreaExtension;
-use SGN\HasOneEdit\HasOneEdit;
+use Fromholdio\HasOneEdit\HasOneEdit;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Core\Manifest\ModuleLoader;
 use SilverStripe\Forms\CheckboxField;
@@ -19,25 +19,28 @@ use UncleCheese\DisplayLogic\Forms\Wrapper;
 class InheritableElementalArea extends ElementalArea
 {
     const MODE_PARENT = 'parent';
+
     const MODE_SITE = 'site';
+
     const MODE_SELF = 'self';
+
     const MODE_NONE = 'none';
 
-    private static $table_name = 'InheritableElementalArea';
+    private static string $table_name = 'InheritableElementalArea';
 
-    private static $allow_include_elements = true;
+    private static bool $allow_include_elements = true;
 
-    private static $db = [
+    private static array $db = [
         'InheritMode' => 'Varchar(20)',
         'DoIncludeSiteElements' => 'Boolean',
         'DoIncludeParentElements' => 'Boolean'
     ];
 
-    private static $extensions = [
+    private static array $extensions = [
         FieldsElementalAreaExtension::class
     ];
 
-    private static $inherit_mode_labels = [
+    private static array $inherit_mode_labels = [
         self::MODE_PARENT => 'Inherit from parent',
         self::MODE_SITE => 'Use site settings',
         self::MODE_SELF => 'Custom settings',
@@ -65,24 +68,20 @@ class InheritableElementalArea extends ElementalArea
                 $parentHasOnes = $parent->hasOne();
                 if (isset($parentHasOnes[$parentRelationName]) && $parent->$parentRelationName()) {
                     $area = $parent->$parentRelationName()->getInheritedElementalArea($relationName);
-                }
-                else if ($parent->$relationName()) {
+                } elseif ($parent->$relationName()) {
                     $area = $parent->$relationName()->getInheritedElementalArea($relationName);
                 }
             }
-        }
-        else if ($mode === self::MODE_SITE) {
+        } elseif ($mode === self::MODE_SITE) {
             $site = $this->getInheritSite();
             if ($site) {
                 if ($site->hasMethod('getInheritedElementalArea')) {
                     $area = $site->getInheritedElementalArea($relationName);
-                }
-                else {
+                } else {
                     $area = $site->$relationName();
                 }
             }
-        }
-        else if ($mode === self::MODE_SELF) {
+        } elseif ($mode === self::MODE_SELF) {
             $area = $this;
         }
 
@@ -106,7 +105,6 @@ class InheritableElementalArea extends ElementalArea
         }
 
         if (count($modeOptions) > 1) {
-
             $page = $this->getOwnerPage();
             if ($page && $page->exists()) {
                 $label = $page->fieldLabel($relationName);
@@ -126,10 +124,8 @@ class InheritableElementalArea extends ElementalArea
         $fields->push(LiteralField::create($relationName . 'ElementalAreaFields', ''));
 
         if (isset($modeOptions[self::MODE_SELF])) {
-
             if ($this->config()->get('allow_include_elements')) {
                 if (isset($modeOptions[self::MODE_SITE]) || isset($modeOptions[self::MODE_PARENT])) {
-
                     $elementsIncludeFieldGroup = FieldGroup::create('Blocks');
 
                     if (isset($modeOptions[self::MODE_SITE])) {
@@ -182,7 +178,7 @@ class InheritableElementalArea extends ElementalArea
         return $fields;
     }
 
-    public function onBeforeWrite()
+    protected function onBeforeWrite()
     {
         parent::onBeforeWrite();
         if ($this->InheritMode === $this->getDefaultInheritMode()) {
@@ -202,8 +198,7 @@ class InheritableElementalArea extends ElementalArea
                 if ($page->ParentID !== $page->SiteID) {
                     $parent = $page->Parent();
                 }
-            }
-            else {
+            } else {
                 $parent = $page->Parent();
             }
             if ($parent && !$parent->exists()) {
@@ -251,7 +246,6 @@ class InheritableElementalArea extends ElementalArea
         }
 
         if (is_a($page, SiteTree::class)) {
-
             $parent = $this->getInheritParent();
             $site = $this->getInheritSite();
 
@@ -267,15 +261,12 @@ class InheritableElementalArea extends ElementalArea
                         unset($options[self::MODE_SITE]);
                     }
                 }
-            }
-            else if (!$site) {
+            } elseif (!$site) {
                 if (isset($options[self::MODE_SITE])) {
                     unset($options[self::MODE_SITE]);
                 }
             }
-        }
-        else if (is_a($page, SiteConfig::class)) {
-
+        } elseif (is_a($page, SiteConfig::class)) {
             if (isset($options[self::MODE_PARENT])) {
                 unset($options[self::MODE_PARENT]);
             }
@@ -298,8 +289,7 @@ class InheritableElementalArea extends ElementalArea
 
         if (isset($options[self::MODE_PARENT])) {
             $mode = self::MODE_PARENT;
-        }
-        else if (isset($options[self::MODE_SITE])) {
+        } elseif (isset($options[self::MODE_SITE])) {
             $mode = self::MODE_SITE;
         }
 
@@ -326,7 +316,7 @@ class InheritableElementalArea extends ElementalArea
         return $name;
     }
 
-    public function getIsMultisitesEnabled()
+    public function getIsMultisitesEnabled(): bool
     {
         $manifest = ModuleLoader::inst()->getManifest();
         return ($manifest->moduleExists('symbiote/silverstripe-multisites')
